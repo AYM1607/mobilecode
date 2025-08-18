@@ -1,6 +1,8 @@
-# Welcome to your Expo app 👋
+# MobileCode
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+![MobileCode Screenshot](screenshots/mobilecode.png)
+
+A mobile client for OpenCode.
 
 ## Get started
 
