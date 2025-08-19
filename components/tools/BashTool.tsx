@@ -147,7 +147,6 @@ export const BashTool: React.FC<BashToolProps> = ({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#f8f9fa',
-    borderRadius: 8,
     borderLeftWidth: 4,
     marginVertical: 4,
   },
@@ -192,7 +191,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#212529',
-    borderRadius: 6,
     padding: 8,
   },
   commandPrompt: {
@@ -235,7 +233,6 @@ const styles = StyleSheet.create({
   },
   outputContent: {
     backgroundColor: '#212529',
-    borderRadius: 6,
     padding: 12,
     maxHeight: 300,
   },
@@ -256,7 +253,6 @@ const styles = StyleSheet.create({
     padding: 8,
     marginHorizontal: 12,
     marginBottom: 12,
-    borderRadius: 6,
   },
   errorText: {
     color: '#721c24',

@@ -186,13 +186,11 @@ const styles = StyleSheet.create({
   defaultTool: {
     backgroundColor: '#f5f5f5',
     padding: 12,
-    borderRadius: 8,
     borderLeftWidth: 3,
     borderLeftColor: '#666',
   },
   readTool: {
     backgroundColor: '#f8f9fa',
-    borderRadius: 8,
     borderLeftWidth: 4,
   },
   readHeader: {
@@ -242,7 +240,6 @@ const styles = StyleSheet.create({
   },
   codeContainer: {
     backgroundColor: '#ffffff',
-    borderRadius: 6,
     padding: 12,
   },
   scrollViewContainer: {
@@ -274,7 +271,6 @@ const styles = StyleSheet.create({
     padding: 8,
     marginHorizontal: 12,
     marginBottom: 12,
-    borderRadius: 6,
   },
   output: {
     fontFamily: 'monospace',

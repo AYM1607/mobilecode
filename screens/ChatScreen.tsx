@@ -7,6 +7,7 @@ import { ToolRenderer, ToolPart } from '../components/tools'
 export const ChatScreen = ({ route }: any) => {
   const { sessionId } = route.params
   const [messages, setMessages] = useState<any[]>([])
+  const [flatListData, setFlatListData] = useState<any[]>([])
   const [permissions, setPermissions] = useState<any[]>([])
   const [inputText, setInputText] = useState('')
   const [loading, setLoading] = useState(false)
@@ -26,6 +27,41 @@ export const ChatScreen = ({ route }: any) => {
     }
   }
 
+  // Convert messages to flat list of parts
+  const flattenMessages = (messages: any[]) => {
+    const flatData: any[] = []
+    
+    messages.forEach((message) => {
+      // Add parts in the order they appear
+      ;(message.parts || []).forEach((part: any, index: number) => {
+        flatData.push({
+          id: `${part.id || `part-${message.info?.id}-${index}`}`,
+          type: part.type,
+          part,
+          messageInfo: message.info,
+          messageId: message.info?.id
+        })
+      })
+        
+      // Add loading state if no parts exist
+      if ((message.parts || []).length === 0) {
+        flatData.push({
+          id: `loading-${message.info?.id}`,
+          type: 'loading',
+          messageInfo: message.info,
+          messageId: message.info?.id
+        })
+      }
+    })
+    
+    return flatData
+  }
+
+  // Update flatListData when messages change
+  useEffect(() => {
+    setFlatListData(flattenMessages(messages))
+  }, [messages])
+
   // Setup SSE connection for real-time updates
   const setupEventSource = () => {
     console.log('Setting up SSE connection to:', `${getServerUrl()}/event`)
@@ -42,7 +78,7 @@ export const ChatScreen = ({ route }: any) => {
 
     eventSource.addEventListener('message', (event) => {
       try {
-        const data = JSON.parse(event.data)
+        const data = JSON.parse(event.data || '{}')
 
         // Handle message updates
         if (data.type === 'message.updated') {
@@ -94,7 +130,7 @@ export const ChatScreen = ({ route }: any) => {
               if (message.info?.id === part.messageID) {
                 // Get existing parts and update/add the new part
                 const existingParts = message.parts || []
-                const partIndex = existingParts.findIndex(p => p.id === part.id)
+                const partIndex = existingParts.findIndex((p: any) => p.id === part.id)
                 
                 let updatedParts
                 if (partIndex >= 0) {
@@ -215,19 +251,15 @@ export const ChatScreen = ({ route }: any) => {
     }
   }
 
-  const renderMessage = ({ item }: any) => {
-    const textParts = item.parts.filter((part: any) => part.type === 'text' && part.text)
-    const toolParts = item.parts.filter((part: any) => part.type === 'tool')
-    const reasoningParts = item.parts.filter((part: any) => part.type === 'reasoning')
-    
-    const isUser = item.info?.role === 'user'
+  const renderPart = ({ item }: any) => {
+    const isUser = item.messageInfo?.role === 'user'
     
     // Check if any tool parts need permissions and get permission data
     const getPermissionInfo = (toolPart: any) => {
       if (!toolPart.callID) return { requiresPermission: false, permission: null }
       
       // Find pending permission for this callID
-      const pendingPermission = permissions.find(p => 
+      const pendingPermission = permissions.find((p: any) => 
         p.callID === toolPart.callID
       )
       
@@ -237,72 +269,71 @@ export const ChatScreen = ({ route }: any) => {
       }
     }
     
-    return (
-      <View style={[styles.messageContainer, isUser ? styles.userMessage : styles.assistantMessage]}>
-        <View style={styles.messageHeader}>
-          <Text style={styles.messageAuthor}>
-            {isUser ? 'You' : 'Assistant'}
-          </Text>
-          {!isUser && item.info?.modelID && (
-            <Text style={styles.modelInfo}>{item.info.modelID}</Text>
-          )}
-        </View>
-
-        {/* Render reasoning parts first */}
-        {reasoningParts.map((part: any, index: number) => (
-          <View key={`reasoning-${index}`} style={styles.reasoningContainer}>
+    // Handle different part types
+    switch (item.type) {
+      case 'reasoning':
+        return (
+          <View style={styles.reasoningContainer}>
             <Text style={styles.reasoningLabel}>Thinking...</Text>
-            {part.text && (
-              <Text style={styles.reasoningText}>{part.text}</Text>
+            {item.part.text && (
+              <Text style={styles.reasoningText}>{item.part.text}</Text>
             )}
           </View>
-        ))}
-
-        {/* Render tool parts */}
-        {toolParts.map((part: any, index: number) => {
-          const permissionInfo = getPermissionInfo(part)
-          return (
-            <ToolRenderer
-              key={`tool-${index}`}
-              part={part as ToolPart}
-              onPermissionResponse={handlePermissionResponse}
-              requiresPermission={permissionInfo.requiresPermission}
-              pendingPermission={permissionInfo.permission}
-            />
-          )
-        })}
-
-        {/* Render final text result at the end for assistant messages */}
-        {!isUser && textParts.map((part: any, index: number) => (
-          <View key={`final-text-${index}`} style={styles.finalResultContainer}>
+        )
+      
+      case 'tool':
+        const permissionInfo = getPermissionInfo(item.part)
+        return (
+          <ToolRenderer
+            part={item.part as ToolPart}
+            onPermissionResponse={handlePermissionResponse}
+            requiresPermission={permissionInfo.requiresPermission}
+            pendingPermission={permissionInfo.permission}
+          />
+        )
+      
+      case 'text':
+        if (!item.part.text) return null
+        
+        const containerStyle = isUser 
+          ? [styles.messageContainer, styles.userMessage]
+          : [styles.messageContainer, styles.assistantMessage]
+        
+        return (
+          <View style={containerStyle}>
+            <View style={styles.messageHeader}>
+              <Text style={styles.messageAuthor}>
+                {isUser ? 'You' : 'Assistant'}
+              </Text>
+              {!isUser && item.messageInfo?.modelID && (
+                <Text style={styles.modelInfo}>{item.messageInfo.modelID}</Text>
+              )}
+            </View>
             <Text style={styles.messageText}>
-              {part.text}
+              {item.part.text}
             </Text>
           </View>
-        ))}
-
-        {/* Render text parts normally for user messages */}
-        {isUser && textParts.map((part: any, index: number) => (
-          <Text key={`text-${index}`} style={styles.messageText}>
-            {part.text}
-          </Text>
-        ))}
-
-        {/* Loading state */}
-        {textParts.length === 0 && toolParts.length === 0 && reasoningParts.length === 0 && (
-          <Text style={styles.loadingText}>Loading...</Text>
-        )}
-      </View>
-    )
+        )
+      
+      case 'loading':
+        return (
+          <View style={[styles.messageContainer, styles.assistantMessage]}>
+            <Text style={styles.loadingText}>Loading...</Text>
+          </View>
+        )
+      
+      default:
+        return null
+    }
   }
 
   return (
     <View style={styles.container}>
       <FlatList
         ref={flatListRef}
-        data={messages}
-        renderItem={renderMessage}
-        keyExtractor={(item, index) => `${item.info.id}-${index}`}
+        data={flatListData}
+        renderItem={renderPart}
+        keyExtractor={(item) => item.id}
         style={styles.messagesList}
         contentContainerStyle={styles.messagesContent}
       />
@@ -339,18 +370,16 @@ const styles = StyleSheet.create({
   messageContainer: {
     marginVertical: 4,
     padding: 8,
-    borderRadius: 12,
-    maxWidth: '85%',
   },
   userMessage: {
-    alignSelf: 'flex-end',
-    backgroundColor: '#007bff',
+    backgroundColor: '#f8f9fa',
+    borderLeftWidth: 3,
+    borderLeftColor: '#42a7f5',
   },
   assistantMessage: {
-    alignSelf: 'flex-start',
     backgroundColor: '#f8f9fa',
-    borderWidth: 1,
-    borderColor: '#e9ecef',
+    borderLeftWidth: 3,
+    borderLeftColor: '#835dd4',
   },
   messageHeader: {
     flexDirection: 'row',
@@ -377,7 +406,6 @@ const styles = StyleSheet.create({
   reasoningContainer: {
     backgroundColor: '#e3f2fd',
     padding: 8,
-    borderRadius: 8,
     marginTop: 8,
     borderLeftWidth: 3,
     borderLeftColor: '#2196f3',
@@ -401,7 +429,6 @@ const styles = StyleSheet.create({
   },
   finalResultContainer: {
     backgroundColor: '#e8f5e8',
-    borderRadius: 8,
     padding: 12,
     marginTop: 12,
     borderLeftWidth: 4,

@@ -159,9 +159,9 @@ export const EditTool: React.FC<EditToolProps> = ({
   const renderDiff = () => {
     if (!diff) return null
 
-    const originalLines = diff.split('\n').length
     const displayDiff = expanded ? diff : truncateDiff(diff)
     const parsedDiff = parseDiff(displayDiff).filter(l => l.type !== 'header') // Exclude headers from rendering
+    const contentLenght = parsedDiff.length
 
     const addedLines = parsedDiff.filter(l => l.type === 'added').length
     const removedLines = parsedDiff.filter(l => l.type === 'removed').length
@@ -188,13 +188,13 @@ export const EditTool: React.FC<EditToolProps> = ({
           </ScrollView>
         </View>
         
-        {originalLines > 20 && (
+        {contentLenght > 20 && (
           <TouchableOpacity 
             style={styles.expandButton}
             onPress={() => setExpanded(!expanded)}
           >
             <Text style={styles.expandText}>
-              {expanded ? 'Show less' : `Show ${originalLines - 20} more lines`}
+              {expanded ? 'Show less' : `Show ${contentLenght - 20} more lines`}
             </Text>
           </TouchableOpacity>
         )}
@@ -228,7 +228,6 @@ export const EditTool: React.FC<EditToolProps> = ({
           <Text style={styles.toolIcon}>✏️</Text>
           <View>
             <Text style={styles.toolTitle}>{getStatusText()}</Text>
-            <Text style={styles.filePath}>{filePath}</Text>
           </View>
         </View>
         <View style={[styles.statusDot, { backgroundColor: getStatusColor() }]} />
@@ -253,7 +252,6 @@ export const EditTool: React.FC<EditToolProps> = ({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#f8f9fa',
-    borderRadius: 8,
     borderLeftWidth: 4,
     marginVertical: 4,
   },
@@ -295,7 +293,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f1f3f4',
     paddingVertical: 8,
     paddingHorizontal: 12,
-    borderRadius: 4,
     marginBottom: 8,
   },
   diffFileName: {
@@ -312,8 +309,6 @@ const styles = StyleSheet.create({
   },
   diffContent: {
     backgroundColor: '#ffffff',
-    borderRadius: 6,
-    padding: 12,
   },
   scrollViewContainer: {
     flexGrow: 0,
@@ -384,7 +379,6 @@ const styles = StyleSheet.create({
     padding: 8,
     marginHorizontal: 12,
     marginBottom: 12,
-    borderRadius: 6,
   },
   diagnosticsTitle: {
     fontSize: 12,
@@ -403,7 +397,6 @@ const styles = StyleSheet.create({
     padding: 8,
     marginHorizontal: 12,
     marginBottom: 12,
-    borderRadius: 6,
   },
   errorText: {
     color: '#721c24',
