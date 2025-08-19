@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { View, Text, TextInput, Button, FlatList, Alert, StyleSheet } from 'react-native'
-import { opencodeClient, getServerUrl } from '../lib/opencode'
 import EventSource from 'react-native-sse'
+import { Markdown } from "react-native-remark";
+
+import { opencodeClient, getServerUrl } from '../lib/opencode'
 import { ToolRenderer, ToolPart } from '../components/tools'
 
 export const ChatScreen = ({ route }: any) => {
@@ -309,9 +311,7 @@ export const ChatScreen = ({ route }: any) => {
                 <Text style={styles.modelInfo}>{item.messageInfo.modelID}</Text>
               )}
             </View>
-            <Text style={styles.messageText}>
-              {item.part.text}
-            </Text>
+            <Markdown markdown={item.part.text} />
           </View>
         )
       
