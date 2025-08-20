@@ -15,6 +15,8 @@ export const ChatScreen = ({ route }: any) => {
   const [loading, setLoading] = useState(false)
   const eventSourceRef = useRef<EventSource | null>(null)
   const flatListRef = useRef<FlatList>(null)
+  const isNearBottomRef = useRef(true) // Track if user is near bottom
+  const pendingScrollRef = useRef(false) // Track if scroll is already pending
 
   // Load existing messages
   const loadMessages = async () => {
@@ -150,8 +152,8 @@ export const ChatScreen = ({ route }: any) => {
                     // Sort by creation time if available, otherwise by type priority
                     const aTime = a.time?.created || 0
                     const bTime = b.time?.created || 0
-                    return aTime - bTime
-                  })
+                     return aTime - bTime
+                   })
                 }
               }
               return message
@@ -159,9 +161,7 @@ export const ChatScreen = ({ route }: any) => {
           })
           
           // Auto scroll to bottom when new content is added
-          setTimeout(() => {
-            flatListRef.current?.scrollToEnd({ animated: true })
-          }, 100)
+          autoScrollToBottom()
         }
       } catch (e) {
         console.error('Failed to parse SSE message:', e, event.data)
@@ -178,6 +178,25 @@ export const ChatScreen = ({ route }: any) => {
 
     console.log('EventSource created:', eventSource)
     eventSourceRef.current = eventSource
+  }
+
+  // Track if user is near bottom of the list
+  const handleScroll = (event: any) => {
+    const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent
+    const distanceFromBottom = contentSize.height - layoutMeasurement.height - contentOffset.y
+    // Consider "near bottom" if within 100 pixels of the bottom
+    isNearBottomRef.current = distanceFromBottom < 100
+  }
+
+  // Shared function to auto-scroll to bottom when appropriate
+  const autoScrollToBottom = (animated: boolean = true) => {
+    if (isNearBottomRef.current && !pendingScrollRef.current) {
+      pendingScrollRef.current = true
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated })
+        pendingScrollRef.current = false
+      }, 100)
+    }
   }
 
   // Send message
@@ -362,6 +381,8 @@ export const ChatScreen = ({ route }: any) => {
         keyExtractor={(item) => item.id}
         style={styles.messagesList}
         contentContainerStyle={styles.messagesContent}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
       />
 
       <View style={styles.inputContainer}>
