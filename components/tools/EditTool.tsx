@@ -174,7 +174,7 @@ export const EditTool: React.FC<EditToolProps> = ({
         <View style={styles.diffContent}>
           <ScrollView 
             horizontal 
-            showsHorizontalScrollIndicator={true}
+            showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.scrollContentContainer}
             style={styles.scrollViewContainer}
           >
