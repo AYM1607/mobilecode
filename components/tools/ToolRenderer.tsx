@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { WriteTool } from './WriteTool'
 import { EditTool } from './EditTool'
 import { BashTool } from './BashTool'
+import { TodoTool } from './TodoTool'
 
 export interface ToolPart {
   id: string
@@ -60,6 +61,10 @@ export const ToolRenderer: React.FC<ToolRendererProps> = ({
             requiresPermission={requiresPermission}
           />
         )
+      case 'todowrite':
+        const metadata = part.state.metadata || {}
+        const todos = metadata.todos || []
+        return <TodoTool todos={todos} />
       default:
         return <DefaultTool part={part} />
     }
