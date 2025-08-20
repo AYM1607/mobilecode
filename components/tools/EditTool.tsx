@@ -135,10 +135,6 @@ export const EditTool: React.FC<EditToolProps> = ({
         style = styles.diffRemoved
         prefix = '- '
         break
-      case 'header':
-        style = styles.diffHeader
-        prefix = ''
-        break
       default:
         prefix = '  '
     }
@@ -160,7 +156,7 @@ export const EditTool: React.FC<EditToolProps> = ({
     if (!diff) return null
 
     const displayDiff = expanded ? diff : truncateDiff(diff)
-    const parsedDiff = parseDiff(displayDiff).filter(l => l.type !== 'header') // Exclude headers from rendering
+    const parsedDiff = parseDiff(displayDiff)
     const contentLenght = parsedDiff.length
 
     const addedLines = parsedDiff.filter(l => l.type === 'added').length
@@ -251,7 +247,7 @@ export const EditTool: React.FC<EditToolProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#2d2d30',
     borderLeftWidth: 4,
     marginVertical: 4,
   },
@@ -273,11 +269,11 @@ const styles = StyleSheet.create({
   toolTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#ffffff',
   },
   filePath: {
     fontSize: 12,
-    color: '#666',
+    color: '#b3b3b3',
     fontFamily: 'monospace',
   },
   statusDot: {
@@ -290,7 +286,7 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   diffFileHeader: {
-    backgroundColor: '#f1f3f4',
+    backgroundColor: '#404040',
     paddingVertical: 8,
     paddingHorizontal: 12,
     marginBottom: 8,
@@ -298,17 +294,17 @@ const styles = StyleSheet.create({
   diffFileName: {
     fontSize: 13,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#ffffff',
     fontFamily: 'monospace',
     marginBottom: 2,
   },
   diffStats: {
     fontSize: 11,
-    color: '#6c757d',
+    color: '#b3b3b3',
     fontFamily: 'monospace',
   },
   diffContent: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#1a1a1a',
   },
   scrollViewContainer: {
     flexGrow: 0,
@@ -324,8 +320,8 @@ const styles = StyleSheet.create({
   lineNumber: {
     fontFamily: 'monospace',
     fontSize: 12,
-    color: '#6c757d',
-    backgroundColor: '#f8f9fa',
+    color: '#888888',
+    backgroundColor: '#2d2d30',
     paddingHorizontal: 4,
     paddingVertical: 1,
     marginRight: 8,
@@ -335,30 +331,30 @@ const styles = StyleSheet.create({
   diffContext: {
     fontFamily: 'monospace',
     fontSize: 12,
-    color: '#333',
+    color: '#ffffff',
     lineHeight: 16,
     flex: 1,
   },
   diffAdded: {
     fontFamily: 'monospace',
     fontSize: 12,
-    color: '#28a745',
-    backgroundColor: '#f0fff4',
+    color: '#4caf50',
+    backgroundColor: '#1b5e20',
     lineHeight: 16,
     flex: 1,
   },
   diffRemoved: {
     fontFamily: 'monospace',
     fontSize: 12,
-    color: '#dc3545',
-    backgroundColor: '#fff5f5',
+    color: '#f44336',
+    backgroundColor: '#4a1a1a',
     lineHeight: 16,
     flex: 1,
   },
   diffHeader: {
     fontFamily: 'monospace',
     fontSize: 12,
-    color: '#6c757d',
+    color: '#888888',
     fontWeight: 'bold',
     lineHeight: 16,
     flex: 1,
@@ -371,11 +367,11 @@ const styles = StyleSheet.create({
   },
   expandText: {
     fontSize: 12,
-    color: '#007bff',
+    color: '#42a7f5',
     fontWeight: '500',
   },
   diagnosticsContainer: {
-    backgroundColor: '#fff3cd',
+    backgroundColor: '#663c00',
     padding: 8,
     marginHorizontal: 12,
     marginBottom: 12,
@@ -383,23 +379,23 @@ const styles = StyleSheet.create({
   diagnosticsTitle: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#856404',
+    color: '#ffcc02',
     marginBottom: 4,
   },
   diagnosticText: {
     fontSize: 11,
-    color: '#856404',
+    color: '#ffcc02',
     fontFamily: 'monospace',
     lineHeight: 14,
   },
   errorContainer: {
-    backgroundColor: '#f8d7da',
+    backgroundColor: '#4a1a1a',
     padding: 8,
     marginHorizontal: 12,
     marginBottom: 12,
   },
   errorText: {
-    color: '#721c24',
+    color: '#ff6b6b',
     fontSize: 12,
     fontFamily: 'monospace',
   },

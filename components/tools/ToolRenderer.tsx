@@ -189,13 +189,13 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   defaultTool: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#2d2d30',
     padding: 12,
     borderLeftWidth: 3,
     borderLeftColor: '#666',
   },
   readTool: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#2d2d30',
     borderLeftWidth: 4,
   },
   readHeader: {
@@ -216,12 +216,12 @@ const styles = StyleSheet.create({
   toolTitle: {
     fontWeight: 'bold',
     fontSize: 14,
-    color: '#333',
+    color: '#ffffff',
     marginBottom: 4,
   },
   filePath: {
     fontSize: 12,
-    color: '#666',
+    color: '#b3b3b3',
     fontFamily: 'monospace',
   },
   statusDot: {
@@ -237,14 +237,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     paddingBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
+    borderBottomColor: '#404040',
   },
   fileInfo: {
     fontSize: 12,
-    color: '#6c757d',
+    color: '#b3b3b3',
   },
   codeContainer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#1e1e1e',
     padding: 12,
   },
   scrollViewContainer: {
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
   codeText: {
     fontFamily: 'monospace',
     fontSize: 12,
-    color: '#333',
+    color: '#ffffff',
     lineHeight: 16,
   },
   expandButton: {
@@ -268,11 +268,11 @@ const styles = StyleSheet.create({
   },
   expandText: {
     fontSize: 12,
-    color: '#007bff',
+    color: '#42a7f5',
     fontWeight: '500',
   },
   errorContainer: {
-    backgroundColor: '#f8d7da',
+    backgroundColor: '#4a1a1a',
     padding: 8,
     marginHorizontal: 12,
     marginBottom: 12,
@@ -280,11 +280,11 @@ const styles = StyleSheet.create({
   output: {
     fontFamily: 'monospace',
     fontSize: 12,
-    color: '#444',
+    color: '#ffffff',
   },
   error: {
     fontFamily: 'monospace',
     fontSize: 12,
-    color: '#d73a49',
+    color: '#ff6b6b',
   },
 })

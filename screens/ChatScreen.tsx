@@ -311,7 +311,33 @@ export const ChatScreen = ({ route }: any) => {
                 <Text style={styles.modelInfo}>{item.messageInfo.modelID}</Text>
               )}
             </View>
-            <Markdown markdown={item.part.text} />
+            <Markdown 
+              markdown={item.part.text}
+              customStyles={{
+                text: { color: '#ffffff', fontSize: 16, lineHeight: 22 },
+                paragraph: { color: '#ffffff', fontSize: 16, lineHeight: 22 },
+                inlineCode: { backgroundColor: '#1a1a1a', color: '#ffffff', fontFamily: 'monospace', padding: 2 },
+                codeBlock: { 
+                  contentBackgroundColor: '#1a1a1a',
+                  contentTextStyle: { color: '#ffffff', fontFamily: 'monospace' },
+                  headerBackgroundColor: '#2d2d30',
+                  headerTextStyle: { color: '#b3b3b3', fontFamily: 'monospace' }
+                },
+                blockquote: { backgroundColor: '#333333', borderLeftColor: '#555555', padding: 8 },
+                heading: (level: number) => ({ 
+                  color: '#ffffff', 
+                  fontSize: 24 - (level * 2), 
+                  fontWeight: 'bold' as any,
+                  marginVertical: 4
+                }),
+                link: { color: '#42a7f5' },
+                strong: { color: '#ffffff', fontWeight: 'bold' as any },
+                emphasis: { color: '#ffffff', fontStyle: 'italic' as any },
+                list: { marginVertical: 4 },
+                listItem: { backgroundColor: 'transparent' },
+                container: { backgroundColor: 'transparent' }
+              }}
+            />
           </View>
         )
       
@@ -343,6 +369,7 @@ export const ChatScreen = ({ route }: any) => {
           value={inputText}
           onChangeText={setInputText}
           placeholder="Type a message..."
+          placeholderTextColor="#888888"
           style={styles.textInput}
           multiline
         />
@@ -359,7 +386,7 @@ export const ChatScreen = ({ route }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#121212',
   },
   messagesList: {
     flex: 1,
@@ -372,12 +399,12 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   userMessage: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#2d2d30',
     borderLeftWidth: 3,
     borderLeftColor: '#42a7f5',
   },
   assistantMessage: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#2d2d30',
     borderLeftWidth: 3,
     borderLeftColor: '#835dd4',
   },
@@ -390,65 +417,67 @@ const styles = StyleSheet.create({
   messageAuthor: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#6c757d',
+    color: '#b3b3b3',
   },
   modelInfo: {
     fontSize: 10,
-    color: '#6c757d',
+    color: '#b3b3b3',
     fontStyle: 'italic',
   },
   messageText: {
     fontSize: 16,
     lineHeight: 22,
-    color: '#333',
+    color: '#ffffff',
     marginTop: 4,
   },
   reasoningContainer: {
-    backgroundColor: '#e3f2fd',
+    backgroundColor: '#1a237e',
     padding: 8,
     marginTop: 8,
     borderLeftWidth: 3,
-    borderLeftColor: '#2196f3',
+    borderLeftColor: '#3f51b5',
   },
   reasoningLabel: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#1976d2',
+    color: '#7986cb',
     marginBottom: 4,
   },
   reasoningText: {
     fontSize: 14,
-    color: '#1976d2',
+    color: '#9fa8da',
     fontStyle: 'italic',
   },
   loadingText: {
     fontSize: 14,
     fontStyle: 'italic',
-    color: '#6c757d',
+    color: '#b3b3b3',
     marginTop: 4,
   },
   finalResultContainer: {
-    backgroundColor: '#e8f5e8',
+    backgroundColor: '#1b5e20',
     padding: 12,
     marginTop: 12,
     borderLeftWidth: 4,
-    borderLeftColor: '#28a745',
+    borderLeftColor: '#4caf50',
   },
   inputContainer: {
     flexDirection: 'row',
     padding: 16,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#1e1e1e',
     borderTopWidth: 1,
-    borderTopColor: '#e9ecef',
+    borderTopColor: '#404040',
   },
   textInput: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#ced4da',
+    borderColor: '#555555',
     borderRadius: 8,
     padding: 12,
     marginRight: 8,
     maxHeight: 100,
     fontSize: 16,
+    backgroundColor: '#2d2d30',
+    color: '#ffffff',
   },
 })

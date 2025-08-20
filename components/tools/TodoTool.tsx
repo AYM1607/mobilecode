@@ -68,7 +68,7 @@ export const TodoTool: React.FC<TodoToolProps> = ({ todos = [] }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#2d2d30',
     padding: 12,
     borderLeftWidth: 4,
     borderLeftColor: '#007bff',
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#495057',
+    color: '#ffffff',
     marginBottom: 8,
   },
   todoItem: {
@@ -96,23 +96,23 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   pendingTodo: {
-    color: '#495057',
+    color: '#ffffff',
   },
   inProgressTodo: {
-    color: '#495057',
+    color: '#ffffff',
     fontWeight: '600',
   },
   completedTodo: {
-    color: '#28a745',
+    color: '#4caf50',
     textDecorationLine: 'line-through',
   },
   cancelledTodo: {
-    color: '#6c757d',
+    color: '#888888',
     textDecorationLine: 'line-through',
     fontStyle: 'italic',
   },
   emptyText: {
-    color: '#6c757d',
+    color: '#888888',
     fontStyle: 'italic',
   },
 })

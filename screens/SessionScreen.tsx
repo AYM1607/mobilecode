@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, FlatList, TouchableOpacity, Button } from 'react-native'
+import { View, Text, FlatList, TouchableOpacity, Button, StyleSheet } from 'react-native'
 import { router } from 'expo-router'
 import { opencodeClient } from '@/lib/opencode'
 import type { Session } from '@opencode-ai/sdk'
@@ -34,30 +34,78 @@ export const SessionsScreen = () => {
 
   const renderSession = ({ item }: { item: Session }) => (
     <TouchableOpacity
-      style={{ padding: 15, borderBottomWidth: 1 }}
+      style={styles.sessionItem}
       onPress={() => router.push(`/chat?sessionId=${item.id}`)}
     >
-      <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{item.title}</Text>
-      <Text style={{ color: 'gray' }}>
+      <Text style={styles.sessionTitle}>{item.title}</Text>
+      <Text style={styles.sessionDate}>
         {new Date(item.time.updated * 1000).toLocaleDateString()}
       </Text>
     </TouchableOpacity>
   )
 
   if (loading) {
-    return <View><Text>Loading sessions...</Text></View>
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>Loading sessions...</Text>
+      </View>
+    )
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <Button title="New Session" onPress={createSession} />
+    <View style={styles.container}>
+      <View style={styles.buttonContainer}>
+        <Button title="New Session" onPress={createSession} />
+      </View>
       <FlatList
         data={sessions}
         renderItem={renderSession}
         keyExtractor={(item) => item.id}
         refreshing={loading}
         onRefresh={loadSessions}
+        style={styles.list}
       />
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#121212',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#121212',
+  },
+  loadingText: {
+    color: '#ffffff',
+    fontSize: 16,
+  },
+  buttonContainer: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333333',
+  },
+  list: {
+    flex: 1,
+  },
+  sessionItem: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333333',
+    backgroundColor: '#1e1e1e',
+  },
+  sessionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 4,
+  },
+  sessionDate: {
+    color: '#888888',
+    fontSize: 14,
+  },
+})

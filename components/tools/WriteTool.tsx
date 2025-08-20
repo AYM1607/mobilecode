@@ -122,7 +122,7 @@ export const WriteTool: React.FC<WriteToolProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#2d2d30',
     borderLeftWidth: 4,
     marginVertical: 4,
   },
@@ -144,11 +144,11 @@ const styles = StyleSheet.create({
   toolTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#ffffff',
   },
   filePath: {
     fontSize: 12,
-    color: '#666',
+    color: '#b3b3b3',
     fontFamily: 'monospace',
   },
   statusDot: {
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     paddingBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
+    borderBottomColor: '#404040',
   },
   fileInfo: {
     flex: 1,
@@ -175,21 +175,21 @@ const styles = StyleSheet.create({
   fileName: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#495057',
+    color: '#ffffff',
   },
   fileDetails: {
     fontSize: 12,
-    color: '#6c757d',
+    color: '#b3b3b3',
   },
   codeContainer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#1a1a1a',
     padding: 12,
     maxHeight: 300,
   },
   codeText: {
     fontFamily: 'monospace',
     fontSize: 12,
-    color: '#333',
+    color: '#ffffff',
     lineHeight: 16,
   },
   expandButton: {
@@ -200,17 +200,17 @@ const styles = StyleSheet.create({
   },
   expandText: {
     fontSize: 12,
-    color: '#007bff',
+    color: '#42a7f5',
     fontWeight: '500',
   },
   errorContainer: {
-    backgroundColor: '#f8d7da',
+    backgroundColor: '#4a1a1a',
     padding: 8,
     marginHorizontal: 12,
     marginBottom: 12,
   },
   errorText: {
-    color: '#721c24',
+    color: '#ff6b6b',
     fontSize: 12,
     fontFamily: 'monospace',
   },

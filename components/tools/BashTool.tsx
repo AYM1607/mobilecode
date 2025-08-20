@@ -146,7 +146,7 @@ export const BashTool: React.FC<BashToolProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#2d2d30',
     borderLeftWidth: 4,
     marginVertical: 4,
   },
@@ -171,11 +171,11 @@ const styles = StyleSheet.create({
   toolTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#ffffff',
   },
   description: {
     fontSize: 12,
-    color: '#666',
+    color: '#b3b3b3',
     marginTop: 2,
   },
   statusDot: {
@@ -190,11 +190,11 @@ const styles = StyleSheet.create({
   commandHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#212529',
+    backgroundColor: '#1a1a1a',
     padding: 8,
   },
   commandPrompt: {
-    color: '#28a745',
+    color: '#4caf50',
     fontFamily: 'monospace',
     fontSize: 14,
     fontWeight: 'bold',
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   commandText: {
-    color: '#fff',
+    color: '#ffffff',
     fontFamily: 'monospace',
     fontSize: 12,
   },
@@ -219,25 +219,25 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     paddingBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
+    borderBottomColor: '#404040',
   },
   outputTitle: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#495057',
+    color: '#ffffff',
   },
   expandText: {
     fontSize: 12,
-    color: '#007bff',
+    color: '#42a7f5',
     fontWeight: '500',
   },
   outputContent: {
-    backgroundColor: '#212529',
+    backgroundColor: '#1a1a1a',
     padding: 12,
     maxHeight: 300,
   },
   stdoutText: {
-    color: '#fff',
+    color: '#ffffff',
     fontFamily: 'monospace',
     fontSize: 12,
     lineHeight: 16,
@@ -249,13 +249,13 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
   errorContainer: {
-    backgroundColor: '#f8d7da',
+    backgroundColor: '#4a1a1a',
     padding: 8,
     marginHorizontal: 12,
     marginBottom: 12,
   },
   errorText: {
-    color: '#721c24',
+    color: '#ff6b6b',
     fontSize: 12,
     fontFamily: 'monospace',
   },

@@ -35,16 +35,16 @@ export const PermissionPrompt: React.FC<PermissionPromptProps> = ({ onResponse }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff3cd',
+    backgroundColor: '#663c00',
     padding: 12,
     borderWidth: 1,
-    borderColor: '#ffeaa7',
+    borderColor: '#cc7700',
     marginTop: 8,
   },
   title: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#856404',
+    color: '#ffcc02',
     marginBottom: 8,
     textAlign: 'center',
   },
