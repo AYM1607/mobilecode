@@ -70,6 +70,7 @@ const SwipeableRow = ({ children, onDelete }: { children: React.ReactNode, onDel
 export const SessionsScreen = () => {
   const [sessions, setSessions] = useState<Session[]>([])
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
 
   const loadSessions = async () => {
     try {
@@ -79,6 +80,18 @@ export const SessionsScreen = () => {
       console.error('Failed to load sessions:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const onRefresh = async () => {
+    setRefreshing(true)
+    try {
+      const sessionsList = await opencodeClient.session.list()
+      setSessions(sessionsList.data!)
+    } catch (error) {
+      console.error('Failed to refresh sessions:', error)
+    } finally {
+      setRefreshing(false)
     }
   }
 
@@ -165,8 +178,8 @@ export const SessionsScreen = () => {
         data={sessions}
         renderItem={renderSession}
         keyExtractor={(item) => item.id}
-        refreshing={loading}
-        onRefresh={loadSessions}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
         style={styles.list}
       />
     </View>
