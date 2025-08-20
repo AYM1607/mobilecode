@@ -1,6 +1,10 @@
 # MobileCode
 
-![MobileCode Screenshot](screenshots/mobilecode.png)
+<div align="center">
+  <img src="screenshots/mobile1.png" width="250" alt="Sessions Screen" />
+  <img src="screenshots/mobile2.png" width="250" alt="Chat Screen" />
+  <img src="screenshots/mobile3.png" width="250" alt="Tool Output" />
+</div>
 
 A mobile client for OpenCode.
 
