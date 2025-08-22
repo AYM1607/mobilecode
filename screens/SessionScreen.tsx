@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { View, Text, FlatList, TouchableOpacity, Button, StyleSheet, Animated, PanResponder, Alert } from 'react-native'
-import { router, useFocusEffect } from 'expo-router'
-import { opencodeClient, basicAuth } from '@/lib/opencode'
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
+import { opencodeClient, getProjectClient, getProjectBasicAuth } from '@/lib/opencode'
+import { projectStorage, type Project } from '@/lib/projectStorage'
 import type { Session } from '@opencode-ai/sdk'
 
 // SwipeableRow component for swipe-to-delete functionality
@@ -93,15 +94,38 @@ const SwipeableRow = ({
 }
 
 export const SessionsScreen = () => {
+  const { projectId } = useLocalSearchParams<{ projectId?: string }>()
   const [sessions, setSessions] = useState<Session[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [scrollEnabled, setScrollEnabled] = useState(true)
+  const [project, setProject] = useState<Project | null>(null)
+  const [client, setClient] = useState(opencodeClient)
+
+  const initializeClient = async () => {
+    if (projectId) {
+      try {
+        const projectData = await projectStorage.getProject(projectId)
+        if (projectData) {
+          setProject(projectData)
+          const projectClient = await getProjectClient(projectId)
+          setClient(projectClient)
+        } else {
+          Alert.alert('Error', 'Project not found')
+          router.back()
+        }
+      } catch (error) {
+        console.error('Failed to initialize project client:', error)
+        Alert.alert('Error', 'Failed to load project')
+        router.back()
+      }
+    }
+  }
 
   const loadSessions = async () => {
     try {
-      const sessionsList = await opencodeClient.session.list({
-        security: [basicAuth]
+      const sessionsList = await client.session.list({
+        security: [getProjectBasicAuth()]
       })
       setSessions(sessionsList.data!)
     } catch (error) {
@@ -114,8 +138,8 @@ export const SessionsScreen = () => {
   const onRefresh = async () => {
     setRefreshing(true)
     try {
-      const sessionsList = await opencodeClient.session.list({
-        security: [basicAuth]
+      const sessionsList = await client.session.list({
+        security: [getProjectBasicAuth()]
       })
       setSessions(sessionsList.data!)
     } catch (error) {
@@ -127,13 +151,14 @@ export const SessionsScreen = () => {
 
   const createSession = async () => {
     try {
-      const newSession = await opencodeClient.session.create({
-        security: [basicAuth]
+      const newSession = await client.session.create({
+        security: [getProjectBasicAuth()]
       })
       console.log(newSession)
       // Refresh the sessions list to include the new session
       await loadSessions()
-      router.push(`/chat?sessionId=${newSession.data!.id}`)
+      const sessionParam = projectId ? `sessionId=${newSession.data!.id}&projectId=${projectId}` : `sessionId=${newSession.data!.id}`
+      router.push(`/chat?${sessionParam}`)
     } catch (error) {
       console.error('Failed to create session:', error)
     }
@@ -141,9 +166,9 @@ export const SessionsScreen = () => {
 
   const deleteSession = async (sessionId: string) => {
     try {
-      await opencodeClient.session.delete({ 
+      await client.session.delete({ 
         path: { id: sessionId },
-        security: [basicAuth]
+        security: [getProjectBasicAuth()]
       })
       // Remove the session from local state
       setSessions(sessions.filter(session => session.id !== sessionId))
@@ -173,14 +198,22 @@ export const SessionsScreen = () => {
   }
 
   useEffect(() => {
-    loadSessions()
-  }, [])
+    initializeClient()
+  }, [projectId])
+
+  useEffect(() => {
+    if (client) {
+      loadSessions()
+    }
+  }, [client])
 
   // Reload sessions when screen comes into focus (e.g., returning from chat)
   useFocusEffect(
     React.useCallback(() => {
-      loadSessions()
-    }, [])
+      if (client) {
+        loadSessions()
+      }
+    }, [client])
   )
 
   const renderSession = ({ item }: { item: Session }) => (
@@ -191,7 +224,10 @@ export const SessionsScreen = () => {
     >
       <TouchableOpacity
         style={styles.sessionItem}
-        onPress={() => router.push(`/chat?sessionId=${item.id}`)}
+        onPress={() => {
+          const sessionParam = projectId ? `sessionId=${item.id}&projectId=${projectId}` : `sessionId=${item.id}`
+          router.push(`/chat?${sessionParam}`)
+        }}
       >
         <Text style={styles.sessionTitle}>{item.title}</Text>
         <Text style={styles.sessionDate}>
@@ -211,6 +247,12 @@ export const SessionsScreen = () => {
 
   return (
     <View style={styles.container}>
+      {project && (
+        <View style={styles.projectHeader}>
+          <Text style={styles.projectName}>{project.name}</Text>
+          <Text style={styles.projectUrl}>{project.url}</Text>
+        </View>
+      )}
       <View style={styles.buttonContainer}>
         <Button title="New Session" onPress={createSession} />
       </View>
@@ -243,6 +285,22 @@ const styles = StyleSheet.create({
   loadingText: {
     color: '#ffffff',
     fontSize: 16,
+  },
+  projectHeader: {
+    padding: 16,
+    backgroundColor: '#2a2a2a',
+    borderBottomWidth: 1,
+    borderBottomColor: '#333333',
+  },
+  projectName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 4,
+  },
+  projectUrl: {
+    fontSize: 12,
+    color: '#0066cc',
   },
   buttonContainer: {
     padding: 16,

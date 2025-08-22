@@ -33,6 +33,13 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      "expo-secure-store",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow MobileCode to access your camera to scan QR codes for adding projects."
+        }
       ]
     ],
     "experiments": {

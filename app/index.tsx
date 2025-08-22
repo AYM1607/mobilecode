@@ -1,6 +1,6 @@
 import React from 'react';
-import { SessionsScreen } from '../screens/SessionScreen';
+import { ProjectsScreen } from '../screens/ProjectsScreen';
 
 export default function HomeScreen() {
-  return <SessionsScreen />;
+  return <ProjectsScreen />;
 }

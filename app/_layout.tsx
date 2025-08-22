@@ -8,6 +8,7 @@ export default function RootLayout() {
     <ThemeProvider value={DarkTheme}>
       <Stack>
         <Stack.Screen name="index" options={{ title: "MobileCode" }} />
+        <Stack.Screen name="projects" options={{ title: "Projects" }} />
         <Stack.Screen name="sessions" options={{ title: "Sessions" }} />
         <Stack.Screen name="chat" options={{ title: "Chat" }} />
       </Stack>
