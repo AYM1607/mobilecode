@@ -100,7 +100,7 @@ export const SessionsScreen = () => {
   const [refreshing, setRefreshing] = useState(false)
   const [scrollEnabled, setScrollEnabled] = useState(true)
   const [project, setProject] = useState<Project | null>(null)
-  const [client, setClient] = useState(opencodeClient)
+  const [client, setClient] = useState<any>(null)
 
   const initializeClient = async () => {
     if (projectId) {
@@ -119,10 +119,14 @@ export const SessionsScreen = () => {
         Alert.alert('Error', 'Failed to load project')
         router.back()
       }
+    } else {
+      setClient(opencodeClient)
     }
   }
 
   const loadSessions = async () => {
+    if (!client) return
+    
     try {
       const sessionsList = await client.session.list({
         security: [getProjectBasicAuth()]
@@ -136,6 +140,8 @@ export const SessionsScreen = () => {
   }
 
   const onRefresh = async () => {
+    if (!client) return
+    
     setRefreshing(true)
     try {
       const sessionsList = await client.session.list({
@@ -150,6 +156,8 @@ export const SessionsScreen = () => {
   }
 
   const createSession = async () => {
+    if (!client) return
+    
     try {
       const newSession = await client.session.create({
         security: [getProjectBasicAuth()]
@@ -165,6 +173,8 @@ export const SessionsScreen = () => {
   }
 
   const deleteSession = async (sessionId: string) => {
+    if (!client) return
+    
     try {
       await client.session.delete({ 
         path: { id: sessionId },
