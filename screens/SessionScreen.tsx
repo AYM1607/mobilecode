@@ -1,15 +1,25 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { View, Text, FlatList, TouchableOpacity, Button, StyleSheet, Animated, PanResponder, Alert } from 'react-native'
 import { router, useFocusEffect } from 'expo-router'
-import { opencodeClient } from '@/lib/opencode'
+import { opencodeClient, basicAuth } from '@/lib/opencode'
 import type { Session } from '@opencode-ai/sdk'
 
 // SwipeableRow component for swipe-to-delete functionality
-const SwipeableRow = ({ children, onDelete }: { children: React.ReactNode, onDelete: (resetFn: () => void) => void }) => {
-  const translateX = new Animated.Value(0)
-  const scale = new Animated.Value(1)
+const SwipeableRow = ({ 
+  children, 
+  onDelete, 
+  onSwipeStart, 
+  onSwipeEnd 
+}: { 
+  children: React.ReactNode, 
+  onDelete: (resetFn: () => void) => void,
+  onSwipeStart?: () => void,
+  onSwipeEnd?: () => void
+}) => {
+  const translateX = useRef(new Animated.Value(0)).current
+  const scale = useRef(new Animated.Value(1)).current
 
-  const resetPosition = () => {
+  const resetPosition = useCallback(() => {
     Animated.parallel([
       Animated.spring(translateX, {
         toValue: 0,
@@ -19,12 +29,27 @@ const SwipeableRow = ({ children, onDelete }: { children: React.ReactNode, onDel
         toValue: 1,
         useNativeDriver: true,
       })
-    ]).start()
-  }
+    ]).start(() => {
+      onSwipeEnd?.()
+    })
+  }, [translateX, scale, onSwipeEnd])
 
-  const panResponder = PanResponder.create({
+  const panResponder = useRef(PanResponder.create({
     onMoveShouldSetPanResponder: (_, gestureState) => {
-      return Math.abs(gestureState.dx) > 20
+      // Only respond to horizontal swipes that are more horizontal than vertical
+      const absX = Math.abs(gestureState.dx)
+      const absY = Math.abs(gestureState.dy)
+      return absX > 10 && absX > absY
+    },
+    onMoveShouldSetPanResponderCapture: (_, gestureState) => {
+      // Capture horizontal gestures aggressively
+      const absX = Math.abs(gestureState.dx)
+      const absY = Math.abs(gestureState.dy)
+      return absX > 15 && absX > absY * 1.5
+    },
+    onPanResponderGrant: () => {
+      onSwipeStart?.()
+      return true
     },
     onPanResponderMove: (_, gestureState) => {
       // Only allow left swipe (negative dx)
@@ -45,7 +70,7 @@ const SwipeableRow = ({ children, onDelete }: { children: React.ReactNode, onDel
       // Handle when gesture is interrupted
       resetPosition()
     },
-  })
+  })).current
 
   return (
     <View style={styles.swipeContainer}>
@@ -71,10 +96,13 @@ export const SessionsScreen = () => {
   const [sessions, setSessions] = useState<Session[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
+  const [scrollEnabled, setScrollEnabled] = useState(true)
 
   const loadSessions = async () => {
     try {
-      const sessionsList = await opencodeClient.session.list()
+      const sessionsList = await opencodeClient.session.list({
+        security: [basicAuth]
+      })
       setSessions(sessionsList.data!)
     } catch (error) {
       console.error('Failed to load sessions:', error)
@@ -86,7 +114,9 @@ export const SessionsScreen = () => {
   const onRefresh = async () => {
     setRefreshing(true)
     try {
-      const sessionsList = await opencodeClient.session.list()
+      const sessionsList = await opencodeClient.session.list({
+        security: [basicAuth]
+      })
       setSessions(sessionsList.data!)
     } catch (error) {
       console.error('Failed to refresh sessions:', error)
@@ -97,7 +127,10 @@ export const SessionsScreen = () => {
 
   const createSession = async () => {
     try {
-      const newSession = await opencodeClient.session.create()
+      const newSession = await opencodeClient.session.create({
+        security: [basicAuth]
+      })
+      console.log(newSession)
       // Refresh the sessions list to include the new session
       await loadSessions()
       router.push(`/chat?sessionId=${newSession.data!.id}`)
@@ -108,7 +141,10 @@ export const SessionsScreen = () => {
 
   const deleteSession = async (sessionId: string) => {
     try {
-      await opencodeClient.session.delete({ path: { id: sessionId } })
+      await opencodeClient.session.delete({ 
+        path: { id: sessionId },
+        security: [basicAuth]
+      })
       // Remove the session from local state
       setSessions(sessions.filter(session => session.id !== sessionId))
     } catch (error) {
@@ -148,7 +184,11 @@ export const SessionsScreen = () => {
   )
 
   const renderSession = ({ item }: { item: Session }) => (
-    <SwipeableRow onDelete={(resetFn) => confirmDeleteSession(item, resetFn)}>
+    <SwipeableRow 
+      onDelete={(resetFn) => confirmDeleteSession(item, resetFn)}
+      onSwipeStart={() => setScrollEnabled(false)}
+      onSwipeEnd={() => setScrollEnabled(true)}
+    >
       <TouchableOpacity
         style={styles.sessionItem}
         onPress={() => router.push(`/chat?sessionId=${item.id}`)}
@@ -181,6 +221,9 @@ export const SessionsScreen = () => {
         refreshing={refreshing}
         onRefresh={onRefresh}
         style={styles.list}
+        scrollEnabled={scrollEnabled}
+        directionalLockEnabled={true}
+        bounces={true}
       />
     </View>
   )

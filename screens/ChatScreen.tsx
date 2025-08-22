@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, Text, TextInput, Button, FlatList, Alert, StyleSheet } from 'react-native'
+import { View, Text, TextInput, Button, FlatList, Alert, StyleSheet, KeyboardAvoidingView, Platform, Keyboard } from 'react-native'
 import EventSource from 'react-native-sse'
 import { Markdown } from "react-native-remark";
 
-import { opencodeClient, getServerUrl } from '../lib/opencode'
+import { opencodeClient, getServerUrl, basicAuth } from '../lib/opencode'
 import { ToolRenderer, ToolPart } from '../components/tools'
 
 export const ChatScreen = ({ route }: any) => {
@@ -22,7 +22,10 @@ export const ChatScreen = ({ route }: any) => {
   const loadMessages = async () => {
     console.log('Loading messages for session:', sessionId)
     try {
-      const sessionMessages = await opencodeClient.session.messages({ path: {id: sessionId} })
+      const sessionMessages = await opencodeClient.session.messages({ 
+        path: {id: sessionId},
+        security: [basicAuth]
+      })
       console.log('Loaded messages:', sessionMessages.data?.length, 'messages')
       console.log('Message data:', JSON.stringify(sessionMessages.data, null, 2))
       setMessages(sessionMessages.data!)
@@ -76,6 +79,7 @@ export const ChatScreen = ({ route }: any) => {
         headers: {
           'Accept': 'text/event-stream',
           'Cache-Control': 'no-cache',
+          'Authorization': 'Basic ' + btoa('user:password')
         }
       }
     )
@@ -207,6 +211,9 @@ export const ChatScreen = ({ route }: any) => {
     setInputText('') // Clear input immediately
     setLoading(true)
     
+    // Dismiss the keyboard
+    Keyboard.dismiss()
+    
     try {
       await opencodeClient.session.chat({
         path: {
@@ -216,7 +223,8 @@ export const ChatScreen = ({ route }: any) => {
           providerID: 'github-copilot',
           modelID: 'claude-sonnet-4',
           parts: [{ type: 'text', text: messageText }],
-        }
+        },
+        security: [basicAuth]
       })
       // Messages will be updated via SSE
     } catch (error) {
@@ -257,7 +265,8 @@ export const ChatScreen = ({ route }: any) => {
       // Respond to the permission
       await opencodeClient.postSessionByIdPermissionsByPermissionId({
         path: { id: sessionId, permissionID: permission.id },
-        body: { response: serverResponse }
+        body: { response: serverResponse },
+        security: [basicAuth]
       })
       
       console.log('Permission response sent successfully')
@@ -373,7 +382,11 @@ export const ChatScreen = ({ route }: any) => {
   }
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView 
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+    >
       <FlatList
         ref={flatListRef}
         data={flatListData}
@@ -400,7 +413,7 @@ export const ChatScreen = ({ route }: any) => {
           disabled={loading || !inputText.trim()}
         />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   )
 }
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { View, Text, Button, Alert } from 'react-native'
-import { opencodeClient, getServerUrl } from '../lib/opencode'
+import { opencodeClient, getServerUrl, basicAuth } from '../lib/opencode'
 
 export const ServerConnection = ({ onConnected }: {onConnected: () => void }) => {
   const serverUrl = getServerUrl()
@@ -10,7 +10,9 @@ export const ServerConnection = ({ onConnected }: {onConnected: () => void }) =>
   const testConnection = async () => {
     setIsConnecting(true)
     try {
-      const appInfo = await opencodeClient.app.get()
+      const appInfo = await opencodeClient.app.get({
+        security: [basicAuth]
+      })
       setIsConnected(true)
       Alert.alert('Connected!', `Connected to OpenCode at ${appInfo.data?.path.cwd}`)
       onConnected()

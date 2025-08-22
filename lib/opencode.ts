@@ -2,9 +2,16 @@ import { createOpencodeClient } from '@opencode-ai/sdk'
 
 export const getServerUrl = () => {
 	// May choose another url based on env.
-	return 'http://localhost:4096'
+	return 'https://30991b94bf0b.ngrok-free.app'
+}
+
+// Basic auth configuration
+export const basicAuth = {
+	type: 'http' as const,
+	scheme: 'basic' as const
 }
 
 export const opencodeClient = createOpencodeClient({
-	baseUrl: getServerUrl()
+	baseUrl: getServerUrl(),
+	auth: 'user:password'
 })
