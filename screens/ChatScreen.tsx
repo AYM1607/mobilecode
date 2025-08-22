@@ -1,13 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { View, Text, TextInput, Button, FlatList, Alert, StyleSheet, KeyboardAvoidingView, Platform, Keyboard } from 'react-native'
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react'
+import { View, Text, TextInput, Button, FlatList, Alert, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, TouchableOpacity } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
+import { Ionicons } from '@expo/vector-icons'
 import EventSource from 'react-native-sse'
-import { Markdown } from "react-native-remark";
+import { Markdown } from "react-native-remark"
 
 import { opencodeClient, getServerUrl, getProjectClient, getProjectBasicAuth, getProjectUrl, getProjectAuthToken } from '../lib/opencode'
 import { ToolRenderer, ToolPart } from '../components/tools'
 
 export const ChatScreen = ({ route }: any) => {
   const { sessionId, projectId } = route.params
+  const navigation = useNavigation()
   const [client, setClient] = useState(opencodeClient)
   const [messages, setMessages] = useState<any[]>([])
   const [flatListData, setFlatListData] = useState<any[]>([])
@@ -18,6 +21,29 @@ export const ChatScreen = ({ route }: any) => {
   const flatListRef = useRef<FlatList>(null)
   const isNearBottomRef = useRef(true) // Track if user is near bottom
   const pendingScrollRef = useRef(false) // Track if scroll is already pending
+
+  // Refresh messages function
+  const handleRefresh = async () => {
+    await loadMessages()
+    // Scroll to bottom after refresh
+    setTimeout(() => {
+      flatListRef.current?.scrollToEnd({ animated: true })
+    }, 100)
+  }
+
+  // Setup navigation header with refresh button
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity 
+          onPress={handleRefresh}
+          style={{ marginRight: 16 }}
+        >
+          <Ionicons name="refresh" size={24} color="#ffffff" />
+        </TouchableOpacity>
+      ),
+    })
+  }, [navigation, handleRefresh])
 
   // Initialize client based on project
   useEffect(() => {
