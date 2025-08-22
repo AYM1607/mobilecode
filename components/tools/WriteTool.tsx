@@ -61,7 +61,7 @@ export const WriteTool: React.FC<WriteToolProps> = ({
 
     const displayContent = expanded ? content : truncateContent(content)
     const extension = getFileExtension(filePath)
-    const lineCount = content.split('\n').length
+    const totalLines = content.split('\n').length
 
     return (
       <View style={styles.contentContainer}>
@@ -69,22 +69,22 @@ export const WriteTool: React.FC<WriteToolProps> = ({
           <View style={styles.fileInfo}>
             <Text style={styles.fileName}>{filePath.split('/').pop()}</Text>
             <Text style={styles.fileDetails}>
-              {extension.toUpperCase()} • {lineCount} lines
+              {extension.toUpperCase()} • {totalLines} lines
             </Text>
           </View>
         </View>
         
-        <ScrollView style={styles.codeContainer} horizontal={true}>
+        <ScrollView style={[styles.codeContainer, expanded && styles.codeContainerExpanded]} horizontal={true}>
           <Text style={styles.codeText}>{displayContent}</Text>
         </ScrollView>
         
-        {content.split('\n').length > 10 && (
+        {totalLines > 10 && (
           <TouchableOpacity 
             style={styles.expandButton}
             onPress={() => setExpanded(!expanded)}
           >
             <Text style={styles.expandText}>
-              {expanded ? 'Show less' : 'Show more'}
+              {expanded ? 'Show less' : `Show ${totalLines - 10} more lines`}
             </Text>
           </TouchableOpacity>
         )}
@@ -185,6 +185,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#1a1a1a',
     padding: 12,
     maxHeight: 300,
+  },
+  codeContainerExpanded: {
+    maxHeight: 9999, // Very large height when expanded (unbounded)
   },
   codeText: {
     fontFamily: 'monospace',

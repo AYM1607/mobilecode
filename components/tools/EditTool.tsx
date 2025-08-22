@@ -155,9 +155,10 @@ export const EditTool: React.FC<EditToolProps> = ({
   const renderDiff = () => {
     if (!diff) return null
 
+    const originalParsedDiff = parseDiff(diff)
     const displayDiff = expanded ? diff : truncateDiff(diff)
     const parsedDiff = parseDiff(displayDiff)
-    const contentLenght = parsedDiff.length
+    const totalLines = originalParsedDiff.length
 
     const addedLines = parsedDiff.filter(l => l.type === 'added').length
     const removedLines = parsedDiff.filter(l => l.type === 'removed').length
@@ -184,13 +185,13 @@ export const EditTool: React.FC<EditToolProps> = ({
           </ScrollView>
         </View>
         
-        {contentLenght > 20 && (
+        {totalLines > 20 && (
           <TouchableOpacity 
             style={styles.expandButton}
             onPress={() => setExpanded(!expanded)}
           >
             <Text style={styles.expandText}>
-              {expanded ? 'Show less' : `Show ${contentLenght - 20} more lines`}
+              {expanded ? 'Show less' : `Show ${totalLines - 20} more lines`}
             </Text>
           </TouchableOpacity>
         )}
