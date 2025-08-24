@@ -220,6 +220,7 @@ export const SessionsScreen = () => {
   // Reload sessions when screen comes into focus (e.g., returning from chat)
   useFocusEffect(
     React.useCallback(() => {
+      setScrollEnabled(true) // Reset scroll state when returning to screen
       if (client) {
         loadSessions()
       }
