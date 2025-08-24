@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons'
 import EventSource from 'react-native-sse'
 import { Markdown } from "react-native-remark"
 
-import { opencodeClient, getServerUrl, getProjectClient, getProjectBasicAuth, getProjectUrl, getProjectAuthToken } from '../lib/opencode'
+import { opencodeClient, getServerUrl, getProjectClient, getProjectBearerAuth, getProjectUrl, getProjectAuthToken } from '../lib/opencode'
 import { ToolRenderer, ToolPart } from '../components/tools'
 
 export const ChatScreen = ({ route }: any) => {
@@ -68,7 +68,7 @@ export const ChatScreen = ({ route }: any) => {
     try {
       const sessionMessages = await client.session.messages({ 
         path: {id: sessionId},
-        security: [getProjectBasicAuth()]
+        security: [getProjectBearerAuth()]
       })
       console.log('Loaded messages:', sessionMessages.data?.length, 'messages')
       console.log('Message data:', JSON.stringify(sessionMessages.data, null, 2))
@@ -91,7 +91,7 @@ export const ChatScreen = ({ route }: any) => {
         // Use project-specific URL and auth if available
         const serverUrl = projectId ? await getProjectUrl(projectId) : getServerUrl()
         const authToken = projectId ? await getProjectAuthToken(projectId) : 'user:password'
-        const authHeader = 'Basic ' + btoa(authToken)
+        const authHeader = 'Bearer ' + authToken
         
         console.log('Setting up SSE connection to:', `${serverUrl}/event`)
         
@@ -298,7 +298,7 @@ export const ChatScreen = ({ route }: any) => {
           modelID: 'claude-sonnet-4',
           parts: [{ type: 'text', text: messageText }],
         },
-        security: [getProjectBasicAuth()]
+        security: [getProjectBearerAuth()]
       })
       // Messages will be updated via SSE
     } catch (error) {
@@ -333,7 +333,7 @@ export const ChatScreen = ({ route }: any) => {
       await client.postSessionByIdPermissionsByPermissionId({
         path: { id: sessionId, permissionID: permission.id },
         body: { response: serverResponse },
-        security: [getProjectBasicAuth()]
+        security: [getProjectBearerAuth()]
       })
       
       console.log('Permission response sent successfully')

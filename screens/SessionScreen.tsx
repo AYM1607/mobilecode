@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { View, Text, FlatList, TouchableOpacity, Button, StyleSheet, Animated, PanResponder, Alert } from 'react-native'
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
-import { opencodeClient, getProjectClient, getProjectBasicAuth } from '@/lib/opencode'
+import { opencodeClient, getProjectClient, getProjectBearerAuth } from '@/lib/opencode'
 import { projectStorage, type Project } from '@/lib/projectStorage'
 import type { Session } from '@opencode-ai/sdk'
 
@@ -129,7 +129,7 @@ export const SessionsScreen = () => {
     
     try {
       const sessionsList = await client.session.list({
-        security: [getProjectBasicAuth()]
+        security: [getProjectBearerAuth()]
       })
       setSessions(sessionsList.data!)
     } catch (error) {
@@ -145,7 +145,7 @@ export const SessionsScreen = () => {
     setRefreshing(true)
     try {
       const sessionsList = await client.session.list({
-        security: [getProjectBasicAuth()]
+        security: [getProjectBearerAuth()]
       })
       setSessions(sessionsList.data!)
     } catch (error) {
@@ -160,7 +160,7 @@ export const SessionsScreen = () => {
     
     try {
       const newSession = await client.session.create({
-        security: [getProjectBasicAuth()]
+        security: [getProjectBearerAuth()]
       })
       console.log(newSession)
       // Refresh the sessions list to include the new session
@@ -178,7 +178,7 @@ export const SessionsScreen = () => {
     try {
       await client.session.delete({ 
         path: { id: sessionId },
-        security: [getProjectBasicAuth()]
+        security: [getProjectBearerAuth()]
       })
       // Remove the session from local state
       setSessions(sessions.filter(session => session.id !== sessionId))

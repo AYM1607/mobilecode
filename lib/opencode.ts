@@ -6,10 +6,10 @@ export const getServerUrl = () => {
 	return 'https://30991b94bf0b.ngrok-free.app'
 }
 
-// Basic auth configuration
-export const basicAuth = {
+// Bearer auth configuration
+export const bearerAuth = {
 	type: 'http' as const,
-	scheme: 'basic' as const
+	scheme: 'bearer' as const
 }
 
 // Default client for backward compatibility
@@ -47,7 +47,7 @@ export async function getProjectAuthToken(projectId: string) {
 	return project ? project.authToken : 'user:password'
 }
 
-// Get basic auth for a project
-export function getProjectBasicAuth() {
-	return basicAuth
+// Get bearer auth for a project
+export function getProjectBearerAuth() {
+	return bearerAuth
 }

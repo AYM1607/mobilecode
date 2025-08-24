@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { opencodeClient, basicAuth } from '@/lib/opencode'
+import { opencodeClient, bearerAuth } from '@/lib/opencode'
 import type { Provider } from '@opencode-ai/sdk'
 
 export const useProviders = () => {
@@ -10,7 +10,7 @@ export const useProviders = () => {
     const loadProviders = async () => {
       try {
         const providersData = await opencodeClient.config.providers({
-          security: [basicAuth]
+          security: [bearerAuth]
         })
         setProviders(providersData.data!.providers)
       } catch (error) {
