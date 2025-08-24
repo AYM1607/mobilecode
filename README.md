@@ -1,9 +1,12 @@
 # MobileCode
 
 <div align="center">
-  <img src="screenshots/mobile1.png" width="250" alt="Sessions Screen" />
-  <img src="screenshots/mobile2.png" width="250" alt="Chat Screen" />
-  <img src="screenshots/mobile3.png" width="250" alt="Tool Output" />
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; max-width: 600px; margin: 0 auto;">
+    <img src="screenshots/mc_1.PNG" width="250" alt="Screenshot 1" style="width: 100%; max-width: 250px; height: auto;" />
+    <img src="screenshots/mc_2.PNG" width="250" alt="Screenshot 2" style="width: 100%; max-width: 250px; height: auto;" />
+    <img src="screenshots/mc_3.PNG" width="250" alt="Screenshot 3" style="width: 100%; max-width: 250px; height: auto;" />
+    <img src="screenshots/mc_4.PNG" width="250" alt="Screenshot 4" style="width: 100%; max-width: 250px; height: auto;" />
+  </div>
 </div>
 
 A mobile client for OpenCode.
