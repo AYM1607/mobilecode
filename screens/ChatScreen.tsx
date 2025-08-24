@@ -11,7 +11,7 @@ import { ToolRenderer, ToolPart } from '../components/tools'
 export const ChatScreen = ({ route }: any) => {
   const { sessionId, projectId } = route.params
   const navigation = useNavigation()
-  const [client, setClient] = useState(opencodeClient)
+  const [client, setClient] = useState<any>(null)
   const [messages, setMessages] = useState<any[]>([])
   const [flatListData, setFlatListData] = useState<any[]>([])
   const [permissions, setPermissions] = useState<any[]>([])
@@ -56,6 +56,8 @@ export const ChatScreen = ({ route }: any) => {
           console.error('Failed to initialize project client:', error)
           Alert.alert('Error', 'Failed to load project settings')
         }
+      } else {
+        setClient(opencodeClient)
       }
     }
     
@@ -64,6 +66,8 @@ export const ChatScreen = ({ route }: any) => {
 
   // Load existing messages
   const loadMessages = async () => {
+    if (!client) return
+    
     console.log('Loading messages for session:', sessionId)
     try {
       const sessionMessages = await client.session.messages({ 
@@ -279,7 +283,7 @@ export const ChatScreen = ({ route }: any) => {
 
   // Send message
   const sendMessage = async () => {
-    if (!inputText.trim()) return
+    if (!inputText.trim() || !client) return
 
     const messageText = inputText.trim()
     setInputText('') // Clear input immediately
@@ -315,6 +319,8 @@ export const ChatScreen = ({ route }: any) => {
   }, [sessionId, client])
 
   const handlePermissionResponse = async (callID: string, response: 'accept' | 'reject' | 'accept_always') => {
+    if (!client) return
+    
     try {
       console.log(`Responding to permission ${callID} with: ${response}`)
       
